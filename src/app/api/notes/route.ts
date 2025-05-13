@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../lib/db';
 import { auth } from '@clerk/nextjs/server';
 
 // GET request to fetch all notes
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     // Try to get user ID from Clerk auth
     const authResult = auth();
@@ -62,7 +62,7 @@ export async function GET(request: Request) {
 }
 
 // POST request to create a new note
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     // Try to get user ID from Clerk auth
     const authResult = auth();

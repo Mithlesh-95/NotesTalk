@@ -1,11 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../../lib/db';
 import { auth } from '@clerk/nextjs/server';
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest) {
   try {
     // Try to get user ID from Clerk auth
     const authResult = auth();
@@ -30,8 +27,11 @@ export async function DELETE(
       }
     }
     
-    // Parse the ID as a number - params.id is already a string, no need to await
-    const id = Number(params.id);
+    // Extract ID from URL
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/');
+    const idStr = pathParts[pathParts.length - 1];
+    const id = Number(idStr);
     
     if (isNaN(id)) {
       return NextResponse.json(
@@ -75,10 +75,7 @@ export async function DELETE(
   }
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     // Try to get user ID from Clerk auth
     const authResult = auth();
@@ -103,8 +100,11 @@ export async function GET(
       }
     }
     
-    // Parse the ID as a number - params.id is already a string, no need to await
-    const id = Number(params.id);
+    // Extract ID from URL
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/');
+    const idStr = pathParts[pathParts.length - 1];
+    const id = Number(idStr);
     
     if (isNaN(id)) {
       return NextResponse.json(
