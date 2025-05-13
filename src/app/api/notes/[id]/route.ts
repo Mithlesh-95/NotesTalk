@@ -1,10 +1,16 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '../../../lib/db';
 import { auth } from '@clerk/nextjs/server';
 
+type Context = {
+  params: {
+    id: string;
+  };
+};
+
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: Context
 ) {
   try {
     // Try to get user ID from Clerk auth
@@ -31,7 +37,7 @@ export async function DELETE(
     }
     
     // Parse the ID as a number - params.id is already a string, no need to await
-    const id = Number(params.id);
+    const id = Number(context.params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
@@ -76,8 +82,8 @@ export async function DELETE(
 }
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: Context
 ) {
   try {
     // Try to get user ID from Clerk auth
@@ -104,7 +110,7 @@ export async function GET(
     }
     
     // Parse the ID as a number - params.id is already a string, no need to await
-    const id = Number(params.id);
+    const id = Number(context.params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
