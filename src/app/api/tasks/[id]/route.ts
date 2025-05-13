@@ -6,7 +6,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = Number(await params.id);
+    const id = Number(params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
@@ -47,7 +47,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = Number(await params.id);
+    const id = Number(params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
@@ -82,7 +82,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = Number(await params.id);
+    const id = Number(params.id);
     
     if (isNaN(id)) {
       return NextResponse.json(
