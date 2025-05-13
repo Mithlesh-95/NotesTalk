@@ -41,7 +41,7 @@ The application uses the following color scheme:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/notestalk.git
+git clone https://github.com/Mithlesh-95/NotesTalk.git
 cd notestalk
 ```
 
