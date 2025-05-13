@@ -1,11 +1,35 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/db';
+import { auth } from '@clerk/nextjs/server';
 
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    // Try to get user ID from Clerk auth
+    const authResult = auth();
+    let userId = authResult?.userId;
+    console.log("DELETE Diary Auth result:", JSON.stringify(authResult));
+    console.log("DELETE Diary Auth userId:", userId);
+    
+    // If Clerk auth fails, try to get user ID from custom header
+    if (!userId) {
+      const headers = request.headers;
+      const headerUserId = headers.get('X-User-Id');
+      console.log("Using header user ID as fallback:", headerUserId);
+      
+      if (headerUserId) {
+        userId = headerUserId;
+      } else {
+        console.log("Unauthorized DELETE: No userId found in auth or headers");
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
+    }
+    
     const id = Number(params.id);
     
     if (isNaN(id)) {
@@ -24,6 +48,14 @@ export async function DELETE(
       return NextResponse.json(
         { error: 'Diary entry not found' },
         { status: 404 }
+      );
+    }
+    
+    // Check if the diary entry belongs to the authenticated user
+    if (diaryEntry.userId !== userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized - you do not have permission to delete this diary entry' },
+        { status: 403 }
       );
     }
     
@@ -47,6 +79,29 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Try to get user ID from Clerk auth
+    const authResult = auth();
+    let userId = authResult?.userId;
+    console.log("GET Diary[id] Auth result:", JSON.stringify(authResult));
+    console.log("GET Diary[id] Auth userId:", userId);
+    
+    // If Clerk auth fails, try to get user ID from custom header
+    if (!userId) {
+      const headers = request.headers;
+      const headerUserId = headers.get('X-User-Id');
+      console.log("Using header user ID as fallback:", headerUserId);
+      
+      if (headerUserId) {
+        userId = headerUserId;
+      } else {
+        console.log("Unauthorized GET[id]: No userId found in auth or headers");
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
+    }
+    
     const id = Number(params.id);
     
     if (isNaN(id)) {
@@ -64,6 +119,14 @@ export async function GET(
       return NextResponse.json(
         { error: 'Diary entry not found' },
         { status: 404 }
+      );
+    }
+    
+    // Check if the diary entry belongs to the authenticated user
+    if (diaryEntry.userId !== userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized - you do not have permission to view this diary entry' },
+        { status: 403 }
       );
     }
     
